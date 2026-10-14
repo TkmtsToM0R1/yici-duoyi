@@ -234,7 +234,7 @@ td.tm{color:var(--muted);font-variant-numeric:tabular-nums}
 
     <div class="panel">
       <h2>② 选择模式</h2>
-      <p class="sub">计时与计分规则随模式变化，排行榜分开记录。</p>
+      <p class="sub">计时与计分规则随模式变化；排行榜按模式分开统计。</p>
       <div class="modes" id="modes">
         <button class="mode on" data-mode="quick">
           <span class="tag">推荐</span>
@@ -269,6 +269,8 @@ td.tm{color:var(--muted);font-variant-numeric:tabular-nums}
         请在四个义项中选出<b>该句中的意思</b>。<br>
         快捷键：<span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span> 选择 ·
         <span class="kbd">Enter</span> 下一题 · <span class="kbd">Esc</span> 退出本轮。<br>
+        排行榜：所有设备共享同一份线上成绩（按模式分开统计）；未接入线上存储、
+        或服务暂时不可达时，自动改用本机记录，并在排行榜页说明当前模式。<br>
         题库取自《中考精编·讲义册（古诗文）》第三章「文言文阅读 · 一词多义」附录，收录该表所引全部篇目（含九下与课外）。
       </p>
     </div>
@@ -348,7 +350,7 @@ td.tm{color:var(--muted);font-variant-numeric:tabular-nums}
   <section id="board" class="hidden">
     <div class="panel">
       <h2>排行榜</h2>
-      <p class="sub">成绩保存在本机浏览器（localStorage），不上传网络。换电脑/换浏览器不会同步。</p>
+      <p class="sub" id="boardNote">正在读取排行榜…</p>
       <div class="tabs" id="boardTabs">
         <button class="tab on" data-scope="all">全部</button>
         <button class="tab" data-scope="quick">快问快答</button>
@@ -361,8 +363,8 @@ td.tm{color:var(--muted);font-variant-numeric:tabular-nums}
         <tbody></tbody>
       </table></div>
       <div class="row">
-        <button class="btn ghost sm" id="btnClearOne">清除我的成绩</button>
-        <button class="btn ghost sm" id="btnClearAll">清空排行榜</button>
+        <button class="btn ghost sm" id="btnClearOne">清除本机成绩</button>
+        <button class="btn ghost sm" id="btnClearAll">清空本机记录</button>
         <button class="btn sm" id="btnHome2">返回首页</button>
       </div>
     </div>
@@ -2609,9 +2611,49 @@ window.BANK_META = {
 </script>
 <script>
 /* ==========================================================================
+   线上排行榜配置（可选）
+
+   本页是纯静态托管，自身不带后端，所以"全班共享的排行榜"需要一个外部存储。
+   填上下面两项即启用线上榜；留空则完全按本机模式运行（成绩只存这台设备）。
+
+     url     —— 项目地址，例如 https://abcdefgh.supabase.co
+     anonKey —— 项目的 anon public key
+
+   anon key 在设计上就是**公开**的（服务端用 RLS 策略限定它只能读和追加），
+   所以写进网页是安全的。**不要**在这里放 service_role key。
+
+   没有配置、或配置了但服务不可达时，页面会自动回退到本机 localStorage 榜，
+   并在界面上如实说明当前处于哪种模式。
+   ========================================================================== */
+window.YCDY_ONLINE = {
+  // 全部留空 = 纯本机模式：成绩只保存在这台设备上，换设备不同步。
+  provider: '',      // 留空则按填了哪组字段自动判定：'supabase' | 'cloudbase'
+  table: 'scores',
+
+  // 方式一：Supabase —— anon 与 sb_publishable_ 两种密钥都支持。
+  //   注意：*.supabase.co 在中国大陆多数网络下实测被重置，不可达。
+  url: '',
+  anonKey: '',
+
+  // 方式二：腾讯云开发 CloudBase（PG 模式 = PostgreSQL + PostgREST，国内可达）
+  //   envId     —— 环境配置里的「环境 ID」
+  //   accessKey —— API Key 配置里生成的 Publishable Key（公开密钥）
+  //   建表与两层权限（GRANT + RLS）见 work/cloudbase_pg_schema.sql
+  envId: 'a-d2gfa5ulrf86ef644',
+  accessKey: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjUwYThlMDhlLTk4MmEtNGJhZS05OTFmLWY2MjQ1ZDdjMTZjOCJ9.eyJpc3MiOiJodHRwczovL2EtZDJnZmE1dWxyZjg2ZWY2NDQuYXAtc2hhbmdoYWkudGNiLWFwaS50ZW5jZW50Y2xvdWRhcGkuY29tIiwic3ViIjoiYW5vbiIsImF1ZCI6ImEtZDJnZmE1dWxyZjg2ZWY2NDQiLCJleHAiOjQwOTU2NjcxMDYsImlhdCI6MTc5MTk4MzkwNiwibm9uY2UiOiJjNGo2MVhCd1IxT1Jhc1Y4LVBFODZRIiwiYXRfaGFzaCI6ImM0ajYxWEJ3UjFPUmFzVjgtUEU4NlEiLCJuYW1lIjoiQW5vbnltb3VzIiwic2NvcGUiOiJhbm9ueW1vdXMiLCJwcm9qZWN0X2lkIjoiYS1kMmdmYTV1bHJmODZlZjY0NCIsIm1ldGEiOnsicGxhdGZvcm0iOiJQdWJsaXNoYWJsZUtleSJ9LCJyb2xlIjoiYW5vbiIsImlzX2Fub255bW91cyI6dHJ1ZSwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiYW5vbnltb3VzIiwicHJvdmlkZXJzIjpbImFub255bW91cyJdfSwidXNlcl9tZXRhZGF0YSI6eyJuYW1lIjoiQW5vbnltb3VzIn0sInVzZXJfdHlwZSI6IiIsImNsaWVudF90eXBlIjoiY2xpZW50X3VzZXIiLCJpc19zeXN0ZW1fYWRtaW4iOmZhbHNlfQ.PnTcMoijkVMTnwZiy-ZPRf4oyYx-6EfO-Q1B14N6vh8wUyM7Uy-E6hx2pWjP5luq7CXIik62swYAFu-G8TV9gX4t2a9RpcEJ52C1TU62TqjID9gp03SFR8f0m_QT-C6IYFIi4B0HHuq6SsgK10G0N4U-_Nuega-pCDkfInJkXzNbUKVcI_aRSDUokKmZe3hsqL0qAjCnOJ80hKC4WWUAaijFloDCOySA7kWzcolny4RQwNvMQXH7UrX0waSWtIZHAiCa1HVVwDqWi3ObiqfEWr_p62jIXF3jHnNsRMgwLNL3oZxVEIPklUwjUV4nPil_2mW222aeIRFWjLyQzXLUVw',
+
+  // 方式三：局域网课堂服务（work/board_server.py），同源调用、零账号
+  //   url: '.', anonKey: 'lan',
+};
+</script>
+<script>
+/* ==========================================================================
    一词多义 · 斩词达人
    Content source: 《中考精编·讲义册（古诗文）》 第三章 文言文阅读
    收录该表所引全部篇目（含九下与课外篇目）。
+
+   排行榜：默认只存本机 localStorage。在 config.js 里配好线上存储后改为全班
+   共享榜；未配置或服务不可达时自动回退本机榜，界面会如实说明当前模式。
    ========================================================================== */
 'use strict';
 
@@ -3022,6 +3064,24 @@ function finish(reason) {
       saveJSON(LS.best, best);
     }
   }
+  if (state.score > 0 && onlineConfigured()) {
+    // Fire and forget: the result screen is already showing local numbers and
+    // is refined once the shared board answers. A failure here only means the
+    // round did not reach the shared board — the local record stands.
+    onlineAdd({
+      name: result.name, mode: result.mode, score: result.score,
+      correct: result.correct, answered: result.answered, acc: result.acc,
+      maxCombo: result.maxCombo, ms: result.ms, at: result.at,
+    }).then(refreshOnlineBoard).then(() => {
+      const el = $('#rsRank');
+      if (!el) return;
+      const rank = rankOf(result);
+      el.innerHTML = rank ? '本轮排名 <b>#' + rank + '</b>' : '尚未上榜';
+    }).catch(err => {
+      boardState.mode = 'local';
+      boardState.error = (err && err.message) || String(err);
+    });
+  }
   renderResult(result);
   show('result');
   updateChips();
@@ -3055,27 +3115,172 @@ function renderResult(r) {
 }
 
 function rankOf(r) {
-  const board = loadJSON(LS.board, []).filter(x => x.mode === r.mode);
+  const board = boardRows().filter(x => x.mode === r.mode);
   const better = board.filter(x => x.score > r.score || (x.score === r.score && x.ms < r.ms));
   return board.length ? better.length + 1 : 0;
 }
 
 /* ------------------------------------------------------------ leaderboard */
-function renderBoard() {
+/* The page is served from static hosting and has no backend of its own, so a
+   board shared by every device needs an external store. config.js picks one:
+
+     Supabase  -> { url, anonKey }                 (anon / sb_publishable_ key)
+     CloudBase -> { envId, accessKey?, region? }   (腾讯云开发；国内可达)
+
+   Supabase's project domain is blocked on many mainland networks, which is why
+   CloudBase exists here as the second (and domestically reachable) option.
+
+   With nothing configured — or when the store cannot be reached — the game
+   falls back to the local board and says so on screen. Both keys are *public*
+   keys by design: the server's rules, not secrecy, limit them to read+append. */
+const ONLINE = Object.assign({
+  provider: '',                    // 留空则按填了哪些字段自动判定
+  url: '', anonKey: '',            // Supabase
+  envId: '', accessKey: '',        // CloudBase（PG 模式）环境 ID / Publishable Key
+  table: 'scores',
+}, window.YCDY_ONLINE || {});
+const boardState = { mode: 'local', rows: null, error: '' };
+const BOARD_COLUMNS = 'name,mode,score,correct,answered,acc,maxCombo,ms,at';
+function onlineProvider() {
+  if (ONLINE.provider) return ONLINE.provider;
+  if (ONLINE.envId && ONLINE.accessKey) return 'cloudbase';
+  if (ONLINE.url && ONLINE.anonKey) return 'supabase';
+  return '';
+}
+
+function onlineConfigured() {
+  const p = onlineProvider();
+  if (p === 'cloudbase') return !!(ONLINE.envId && ONLINE.accessKey);
+  if (p === 'supabase') return !!(ONLINE.url && ONLINE.anonKey);
+  return false;
+}
+
+function onlineEndpoint(query) {
+  return ONLINE.url.replace(/\/+$/, '') + '/rest/v1/' + ONLINE.table + (query || '');
+}
+
+function onlineHeaders(extra) {
+  const headers = {
+    apikey: ONLINE.anonKey,
+    'Content-Type': 'application/json',
+  };
+  // Legacy `anon` keys are JWTs and must also ride the Authorization header so
+  // PostgREST can resolve the Postgres role. The newer `sb_publishable_...`
+  // keys are NOT JWTs — Supabase's docs are explicit that they belong on the
+  // `apikey` header only, and sending one as a bearer token makes the request
+  // fail. So the header set depends on which kind of key was configured.
+  if (!/^sb_(publishable|secret)_/.test(ONLINE.anonKey)) {
+    headers.Authorization = 'Bearer ' + ONLINE.anonKey;
+  }
+  return Object.assign(headers, extra || {});
+}
+
+/* ---- Supabase (PostgREST) ------------------------------------------------ */
+async function supabaseList() {
+  const res = await fetch(onlineEndpoint('?select=' + BOARD_COLUMNS +
+    '&order=score.desc,ms.asc&limit=500'), { headers: onlineHeaders() });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function supabaseAdd(row) {
+  const res = await fetch(onlineEndpoint(), {
+    method: 'POST',
+    headers: onlineHeaders({ Prefer: 'return=minimal' }),
+    body: JSON.stringify([row]),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+}
+
+/* ---- 腾讯云开发 CloudBase（PG 模式：PostgreSQL + PostgREST）--------------
+   CloudBase's newer environments are "PG 模式": PostgreSQL behind the same
+   open-source PostgREST that Supabase uses. So this needs no SDK at all — just
+   fetch against the gateway, and the page stays self-contained.
+
+     端点  https://<envId>.api.tcloudbasegateway.com/v1/rdb/rest/<table>
+     认证  Authorization: Bearer <Publishable Key>   (以 anon 角色访问)
+
+   Permissions live in the database (表级 GRANT + 行级 RLS), not in the key. */
+function cloudbaseBase() {
+  // `restBase` is an escape hatch: it lets the same code talk to a self-hosted
+  // PostgREST, and it is what the offline test harness points at a stub.
+  const base = ONLINE.restBase ||
+    ('https://' + ONLINE.envId + '.api.tcloudbasegateway.com/v1/rdb/rest');
+  return base.replace(/\/+$/, '') + '/' + ONLINE.table;
+}
+
+function cloudbaseHeaders(extra) {
+  return Object.assign({
+    Authorization: 'Bearer ' + ONLINE.accessKey,
+    'Content-Type': 'application/json',
+  }, extra || {});
+}
+
+async function cloudbaseList() {
+  const res = await fetch(cloudbaseBase() + '?select=' + BOARD_COLUMNS +
+    '&order=score.desc,ms.asc&limit=500', { headers: cloudbaseHeaders() });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function cloudbaseAdd(row) {
+  const res = await fetch(cloudbaseBase(), {
+    method: 'POST',
+    headers: cloudbaseHeaders({ Prefer: 'return=minimal' }),
+    body: JSON.stringify(row),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+}
+
+/* ---- dispatch ------------------------------------------------------------ */
+async function onlineList() {
+  return onlineProvider() === 'cloudbase' ? cloudbaseList() : supabaseList();
+}
+
+async function onlineAdd(row) {
+  return onlineProvider() === 'cloudbase' ? cloudbaseAdd(row) : supabaseAdd(row);
+}
+
+function boardRows() {
+  return (boardState.mode === 'online' && boardState.rows)
+    ? boardState.rows : loadJSON(LS.board, []);
+}
+
+function boardNoteText() {
+  if (!onlineConfigured()) {
+    return '本机模式：成绩只保存在这台设备上，换设备或换浏览器不会同步。';
+  }
+  if (boardState.mode === 'online') {
+    return '线上共享排行榜：所有设备看到的是同一份成绩。';
+  }
+  return boardState.error
+    ? '线上排行榜暂时连不上（' + boardState.error + '），下面显示本机记录。'
+    : '正在读取线上排行榜…';
+}
+
+function paintBoard() {
   const scope = state.boardScope;
-  let rows = loadJSON(LS.board, []);
-  if (scope !== 'all') rows = rows.filter(r => r.mode === scope);
-  rows.sort((a, b) => b.score - a.score || a.ms - b.ms || a.at - b.at);
-  rows = rows.slice(0, 50);
+  let rows = boardRows().filter(r => scope === 'all' || r.mode === scope);
+  rows = rows.slice()
+    .sort((a, b) => b.score - a.score || a.ms - b.ms || (a.at || 0) - (b.at || 0))
+    .slice(0, 50);
+
+  const note = $('#boardNote');
+  if (note) note.textContent = boardNoteText();
 
   const tb = $('#boardTable tbody');
   if (!rows.length) {
-    tb.innerHTML = '<tr><td colspan="7"><div class="empty">还没有成绩，先去答一轮吧 🎯</div></td></tr>';
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">' +
+      (boardState.mode === 'online'
+        ? '线上还没有成绩，去抢第一个吧 🎯'
+        : '还没有成绩，先去答一轮吧 🎯') + '</div></td></tr>';
     return;
   }
   tb.innerHTML = rows.map((r, i) => {
     const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    const d = new Date(r.at);
+    const d = new Date(r.at || Date.now());
     const stamp = (d.getMonth() + 1) + '/' + d.getDate() + ' ' +
       String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
     return '<tr class="' + cls + '"><td class="rk">' + (i + 1) + '</td>' +
@@ -3083,9 +3288,29 @@ function renderBoard() {
       '<td class="sc">' + r.score + '</td>' +
       '<td>' + r.acc + '%</td>' +
       '<td class="tm">' + fmtTime(r.ms) + '</td>' +
-      '<td>' + MODES[r.mode].name + '</td>' +
+      '<td>' + ((MODES[r.mode] || {}).name || r.mode) + '</td>' +
       '<td class="tm">' + stamp + '</td></tr>';
   }).join('');
+}
+
+/* Paints at once from whatever is already known (so the screen is never blank),
+   then refreshes from the shared board when one is configured. */
+function renderBoard() {
+  paintBoard();
+  if (onlineConfigured()) refreshOnlineBoard();
+}
+
+async function refreshOnlineBoard() {
+  try {
+    boardState.rows = await onlineList();
+    boardState.mode = 'online';
+    boardState.error = '';
+  } catch (err) {
+    boardState.mode = 'local';
+    boardState.error = (err && err.message) || String(err);
+  }
+  paintBoard();
+  updateChips();
 }
 
 /* ------------------------------------------------------------------ events */
@@ -3136,7 +3361,9 @@ function bind() {
     renderBoard();
   }));
   $('#btnClearAll').addEventListener('click', () => {
-    if (confirm('确定清空排行榜上的全部成绩吗？此操作不可撤销。')) {
+    const tail = onlineConfigured()
+      ? '（只清空这台设备上的记录，线上共享成绩不会被删除）' : '此操作不可撤销。';
+    if (confirm('确定清空本机排行榜记录吗？' + tail)) {
       saveJSON(LS.board, []);
       saveJSON(LS.best, {});
       renderBoard(); updateChips();
@@ -3144,7 +3371,8 @@ function bind() {
   });
   $('#btnClearOne').addEventListener('click', () => {
     if (!state.name) { alert('请先在首页选择或输入姓名。'); return; }
-    if (!confirm('确定清除「' + state.name + '」的成绩吗？')) return;
+    const tail = onlineConfigured() ? '（只清这台设备上的记录）' : '';
+    if (!confirm('确定清除「' + state.name + '」的本机成绩吗？' + tail)) return;
     const board = loadJSON(LS.board, []).filter(r => r.name !== state.name);
     saveJSON(LS.board, board);
     const best = loadJSON(LS.best, {}); delete best[state.name]; saveJSON(LS.best, best);
@@ -3251,6 +3479,7 @@ window.__ycdy = {
   get state() { return state; },
   startQuiz, finish, answer, advanceAfterAnswer, renderBoard, show, buildPool,
   openCards, renderCard, cardState,
+  boardState, refreshOnlineBoard, onlineList, onlineAdd, onlineConfigured,
 };
 </script>
 </body>

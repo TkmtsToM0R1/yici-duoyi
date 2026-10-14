@@ -1,0 +1,3257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一词多义·斩词达人 | 中考精编·古诗文</title>
+<style>
+:root{
+  --bg:#0f1524; --bg2:#161e33; --panel:#1c2740; --panel2:#22304e;
+  --line:#2c3a5c; --text:#e8eefc; --muted:#93a4c6; --dim:#6b7da3;
+  --brand:#4f8cff; --brand2:#7c5cff; --ok:#25c37a; --bad:#ff5d6c; --warn:#ffb020;
+  --gold:#ffd24a; --silver:#cfd8e8; --bronze:#e0a06a;
+  --r:16px; --sh:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:radial-gradient(1200px 700px at 15% -10%,#1d2a48 0%,transparent 55%),
+             radial-gradient(900px 600px at 110% 10%,#2a1d4a 0%,transparent 50%),
+             var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100%;
+}
+button{font-family:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 48px}
+.hidden{display:none !important}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:.5px}
+.logo .mark{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));font-size:19px;
+  box-shadow:0 6px 18px rgba(79,140,255,.35)
+}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:1px}
+.spacer{flex:1}
+.chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:999px;
+  padding:6px 12px;font-size:12.5px;color:var(--muted)
+}
+.chip b{color:var(--text)}
+
+/* ---------- panels ---------- */
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);
+  padding:18px
+}
+.panel + .panel{margin-top:16px}
+h2{margin:0 0 4px;font-size:16px}
+.sub{color:var(--muted);font-size:13px;line-height:1.7;margin:0}
+
+/* ---------- name picker ---------- */
+fieldset{border:0;margin:0;padding:0}
+.nameGrid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  gap:8px;margin:12px 0 4px;max-height:210px;overflow:auto;padding-right:4px
+}
+.nameBtn{
+  background:var(--panel2);border:1px solid var(--line);color:var(--text);
+  border-radius:11px;padding:11px 8px;font-size:14px;cursor:pointer;
+  transition:.15s;text-align:center
+}
+.nameBtn:hover{border-color:var(--brand);transform:translateY(-1px)}
+.nameBtn.on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+input[type=text],textarea,select{
+  background:#131b2e;border:1px solid var(--line);color:var(--text);
+  border-radius:11px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none
+}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--brand)}
+textarea{width:100%;min-height:104px;resize:vertical;line-height:1.6}
+.btn{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));border:0;color:#fff;
+  border-radius:12px;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer;
+  transition:.15s;box-shadow:0 8px 20px rgba(79,140,255,.28)
+}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none;box-shadow:none}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);box-shadow:none;font-weight:600}
+.btn.ghost:hover{color:var(--text);border-color:var(--brand)}
+.btn.sm{padding:8px 13px;font-size:13px;border-radius:10px}
+
+/* ---------- mode cards ---------- */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.mode{
+  background:var(--panel2);border:1.5px solid var(--line);border-radius:14px;
+  padding:14px;cursor:pointer;transition:.15s;text-align:left;color:var(--text);
+  min-width:0
+}
+.mode:hover{border-color:var(--brand);transform:translateY(-2px)}
+.mode.on{border-color:var(--brand);background:linear-gradient(150deg,rgba(79,140,255,.22),rgba(124,92,255,.14))}
+.mode .t{font-weight:800;font-size:14.5px;margin-bottom:5px;display:block}
+.mode .d{color:var(--muted);font-size:12.5px;line-height:1.6;display:block}
+.mode .tag{
+  float:right;font-size:10.5px;color:#0d1424;background:var(--gold);
+  border-radius:6px;padding:1px 6px;font-weight:800;margin-left:6px
+}
+
+/* ---------- quiz ---------- */
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.bar{flex:1;min-width:150px;height:8px;background:#131b2e;border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .25s}
+.timer{
+  font-variant-numeric:tabular-nums;font-weight:800;font-size:17px;min-width:74px;text-align:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:7px 10px
+}
+.timer.low{color:var(--bad);border-color:rgba(255,93,108,.5);animation:pulse .9s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.combo{font-size:13px;color:var(--warn);font-weight:700;min-width:70px}
+
+.qcard{
+  background:linear-gradient(180deg,#1e2942,#18213a);border:1px solid var(--line);
+  border-radius:var(--r);padding:22px 20px;box-shadow:var(--sh)
+}
+.qmeta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:14px}
+.sentence{
+  font-size:clamp(20px,3.4vw,30px);line-height:2;letter-spacing:1px;
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;
+  margin:6px 0 6px;word-break:break-word
+}
+.sentence .hl{
+  color:#0d1424;background:linear-gradient(180deg,var(--gold),#ffb020);
+  border-radius:7px;padding:1px 8px;font-weight:700;
+  box-shadow:0 0 0 2px rgba(255,210,74,.22)
+}
+.src{color:var(--muted);font-size:13.5px;margin-top:10px}
+.ask{margin:20px 0 10px;font-size:14px;color:var(--muted)}
+.ask b{color:var(--gold);font-size:17px;font-family:"Songti SC",serif}
+
+.opts{display:grid;gap:10px;margin-top:6px}
+.opt{
+  display:flex;align-items:center;gap:12px;text-align:left;
+  background:var(--panel2);border:1.5px solid var(--line);color:var(--text);
+  border-radius:13px;padding:14px 16px;font-size:16px;cursor:pointer;transition:.13s
+}
+.opt:hover:not(.locked){border-color:var(--brand);transform:translateX(3px)}
+.opt .k{
+  width:26px;height:26px;flex:0 0 26px;border-radius:8px;display:grid;place-items:center;
+  background:#131b2e;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)
+}
+.opt.right{background:linear-gradient(135deg,rgba(37,195,122,.24),rgba(37,195,122,.10));border-color:var(--ok)}
+.opt.right .k{background:var(--ok);color:#08200f;border-color:transparent}
+.opt.wrong{background:linear-gradient(135deg,rgba(255,93,108,.22),rgba(255,93,108,.08));border-color:var(--bad)}
+.opt.wrong .k{background:var(--bad);color:#2a0509;border-color:transparent}
+.opt.locked{cursor:default}
+.opt.dim{opacity:.5}
+
+.fb{margin-top:16px;border-radius:13px;padding:13px 15px;font-size:14px;line-height:1.75;border:1px solid}
+.fb.ok{background:rgba(37,195,122,.13);border-color:rgba(37,195,122,.42)}
+.fb.no{background:rgba(255,93,108,.13);border-color:rgba(255,93,108,.42)}
+.fb b{color:var(--gold)}
+.fb .allEx{margin-top:8px;color:var(--muted);font-size:13px}
+.fb .allEx em{font-style:normal;color:var(--text)}
+
+/* ---------- result ---------- */
+.scoreBig{font-size:58px;font-weight:900;line-height:1;background:linear-gradient(135deg,#7cc3ff,#c8a4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin:16px 0}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:12px;text-align:center}
+.stat .v{font-size:22px;font-weight:800}
+.stat .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+.review{margin-top:14px;max-height:340px;overflow:auto}
+.rv{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.7}
+.rv .m{flex:0 0 26px;font-weight:800;text-align:center}
+.rv .m.y{color:var(--ok)} .rv .m.n{color:var(--bad)}
+.rv .body{flex:1}
+.rv .body .s{font-family:"Songti SC",serif;font-size:15px}
+.rv .body .s mark{background:rgba(255,210,74,.28);color:var(--gold);border-radius:4px;padding:0 4px}
+.rv .body .a{color:var(--muted);font-size:12.5px;margin-top:3px}
+.rv .body .a i{font-style:normal;color:var(--ok)}
+.rv .body .a u{text-decoration:none;color:var(--bad)}
+
+/* ---------- leaderboard ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.5px}
+tbody tr:hover{background:rgba(79,140,255,.07)}
+td.rk{width:52px;font-weight:800;color:var(--muted)}
+tr.top1 td.rk{color:var(--gold)} tr.top2 td.rk{color:var(--silver)} tr.top3 td.rk{color:var(--bronze)}
+td.sc{font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums}
+td.nm{font-weight:600}
+td.tm{color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{color:var(--dim);text-align:center;padding:26px 0;font-size:14px}
+.tabs{display:flex;gap:6px;margin:4px 0 12px;flex-wrap:wrap}
+.tab{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:7px 13px;font-size:13px;cursor:pointer}
+.tab.on{background:var(--panel2);color:var(--text);border-color:var(--brand);font-weight:700}
+.note{color:var(--dim);font-size:12px;line-height:1.7;margin-top:10px}
+.kbd{background:#131b2e;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;color:var(--muted)}
+
+@media (max-width:560px){
+  .wrap{padding:12px 11px 40px}
+  .qcard{padding:16px 14px}
+  .scoreBig{font-size:46px}
+  .opt{font-size:15px;padding:12px 13px}
+  .modes{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="logo">
+      <span class="mark">斩</span>
+      <span>一词多义 · 斩词达人<small>中考精编 · 古诗文 / 文言实词</small></span>
+    </div>
+    <span class="spacer"></span>
+    <span class="chip" id="chipBank">词库 <b>—</b> 题</span>
+    <span class="chip" id="chipBest">本人最佳 <b>—</b></span>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <section id="home">
+    <div class="panel">
+      <h2>① 选择你的名字</h2>
+      <p class="sub">从下方名单中点选，或在输入框里手动输入。名单可按 <span class="kbd">每行一个</span> 批量导入。</p>
+      <div class="nameGrid" id="nameGrid"></div>
+      <div class="row">
+        <input type="text" id="nameInput" placeholder="输入姓名…" autocomplete="off" style="min-width:200px">
+        <button class="btn ghost sm" id="btnRoster">导入 / 编辑名单</button>
+      </div>
+      <div id="rosterBox" class="hidden" style="margin-top:12px">
+        <textarea id="rosterText" placeholder="每行一个名字，例如：&#10;张三&#10;李四&#10;王五"></textarea>
+        <div class="row">
+          <button class="btn sm" id="btnRosterSave">保存名单</button>
+          <button class="btn ghost sm" id="btnRosterReset">恢复默认名单</button>
+          <span class="note" style="margin:0">保存后立即生效，并记在本机浏览器里。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>② 选择模式</h2>
+      <p class="sub">计时与计分规则随模式变化，排行榜分开记录。</p>
+      <div class="modes" id="modes">
+        <button class="mode on" data-mode="quick">
+          <span class="tag">推荐</span>
+          <span class="t">快问快答 · 20题</span>
+          <span class="d">每题 15 秒，答对连击加分。适合课间刷一轮。</span>
+        </button>
+        <button class="mode" data-mode="timed">
+          <span class="t">限时挑战 · 3分钟</span>
+          <span class="d">3 分钟内尽量多答，答错扣 2 秒。</span>
+        </button>
+        <button class="mode" data-mode="survival">
+          <span class="t">闯关模式 · 3条命</span>
+          <span class="d">答错扣一条命，比拼连续答对题数。</span>
+        </button>
+        <button class="mode" data-mode="all">
+          <span class="t">全部题目 · 摸底</span>
+          <span class="d">覆盖全部词条，不计时，适合查漏补缺。</span>
+        </button>
+      </div>
+      <div class="row">
+        <button class="btn" id="btnStart">开始答题</button>
+        <button class="btn ghost" id="btnCards">速览词卡</button>
+        <button class="btn ghost" id="btnGoBoard">查看排行榜</button>
+      </div>
+      <p class="note" id="modeNote"></p>
+    </div>
+
+    <div class="panel">
+      <h2>③ 玩法说明</h2>
+      <p class="sub">
+        每题给出一句文言文，句中<b style="color:var(--gold)">加粗高亮</b>的字就是要考的实词。
+        请在四个义项中选出<b>该句中的意思</b>。<br>
+        快捷键：<span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span> 选择 ·
+        <span class="kbd">Enter</span> 下一题 · <span class="kbd">Esc</span> 退出本轮。<br>
+        题库取自《中考精编·讲义册（古诗文）》第三章「文言文阅读 · 一词多义」附录，收录该表所引全部篇目（含九下与课外）。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="hidden">
+    <div class="hud">
+      <div class="bar"><i id="progBar"></i></div>
+      <div class="timer" id="timer">--</div>
+      <div class="combo" id="combo"></div>
+      <button class="btn ghost sm" id="btnQuit">结束本轮</button>
+    </div>
+    <div class="qcard">
+      <div class="qmeta">
+        <span id="qIndex">第 1 题</span>
+        <span id="qScore">得分 0</span>
+      </div>
+      <div class="sentence" id="sentence"></div>
+      <div class="src" id="qSrc"></div>
+      <div class="ask">句中 <b id="qWord"></b> 的意思是：</div>
+      <div class="opts" id="opts"></div>
+      <div id="fb"></div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="result" class="hidden">
+    <div class="panel">
+      <h2 id="rsTitle">本轮结束</h2>
+      <div class="row" style="align-items:flex-end;gap:18px">
+        <div><div class="scoreBig" id="rsScore">0</div><div class="note" style="margin:0">总得分</div></div>
+        <div style="flex:1"></div>
+        <div id="rsRank" class="chip"></div>
+      </div>
+      <div class="statGrid" id="rsStats"></div>
+      <div class="row">
+        <button class="btn" id="btnAgain">再来一轮</button>
+        <button class="btn ghost" id="btnBoard2">查看排行榜</button>
+        <button class="btn ghost" id="btnHome">返回首页</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>本轮回顾 · 错题优先</h2>
+      <div class="review" id="rsReview"></div>
+    </div>
+  </section>
+
+  <!-- ============ CARDS ============ -->
+  <section id="cards" class="hidden">
+    <div class="panel">
+      <h2>速览词卡 · 先认后斩</h2>
+      <p class="sub">按 <span class="kbd">←</span><span class="kbd">→</span> 翻卡，按 <span class="kbd">空格</span> 看/遮释义。看懂一轮再去做题，正确率会高很多。</p>
+      <div class="row">
+        <input type="text" id="cardSearch" placeholder="搜索字或句…" style="min-width:220px">
+        <span class="chip" id="cardPos">—</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="row" style="align-items:flex-start;gap:14px">
+        <div style="font-family:'Songti SC',serif;font-size:64px;font-weight:700;line-height:1;color:var(--gold);min-width:80px" id="cardWord">词</div>
+        <div style="flex:1;min-width:220px">
+          <div style="color:var(--muted);font-size:13px;margin-bottom:8px" id="cardCount"></div>
+          <div id="cardSenses"></div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn ghost sm" id="cardPrev">← 上一个</button>
+        <button class="btn ghost sm" id="cardNext">下一个 →</button>
+        <button class="btn sm" id="cardQuiz">就考这些，开始答题</button>
+        <button class="btn ghost sm" id="cardHome">返回首页</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOARD ============ -->
+  <section id="board" class="hidden">
+    <div class="panel">
+      <h2>排行榜</h2>
+      <p class="sub">成绩保存在本机浏览器（localStorage），不上传网络。换电脑/换浏览器不会同步。</p>
+      <div class="tabs" id="boardTabs">
+        <button class="tab on" data-scope="all">全部</button>
+        <button class="tab" data-scope="quick">快问快答</button>
+        <button class="tab" data-scope="timed">限时挑战</button>
+        <button class="tab" data-scope="survival">闯关模式</button>
+        <button class="tab" data-scope="all_q">全部题目</button>
+      </div>
+      <div style="overflow:auto"><table id="boardTable">
+        <thead><tr><th class="rk">名次</th><th>姓名</th><th>得分</th><th>正确率</th><th>用时</th><th>模式</th><th>时间</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="row">
+        <button class="btn ghost sm" id="btnClearOne">清除我的成绩</button>
+        <button class="btn ghost sm" id="btnClearAll">清空排行榜</button>
+        <button class="btn sm" id="btnHome2">返回首页</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ==========================================================================
+   题库 · 一词多义（《中考精编》全量）
+   来源：《中考精编·讲义册（古诗文）》第二部分 古诗文阅读
+         第三章 文言文阅读 ·【三】初中文言文一词多义汇编
+
+   收录范围：该表所引全部篇目 —— 含九年级下册与书中所引课外篇目；表内以成语
+             举例的条目按「（成语）」标注。
+   本文件由 work/build_bank.py 从 OCR 转录结果自动生成，请勿手工大改结构。
+
+   数据结构：
+     window.QUESTION_BANK = [
+       { word: '之', senses: [ { meaning:'…', sentence:'…', source:'《…》' }, … ] },
+       ……
+     ]
+   同一 word 的多个 senses 会互为干扰项，用来考查真实的一词多义辨析。
+   ========================================================================== */
+'use strict';
+
+window.QUESTION_BANK = [
+  {
+    "word": "一",
+    "senses": [
+      {
+        "meaning": "全部",
+        "sentence": "长烟一空。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "第一次",
+        "sentence": "一鼓作气。",
+        "source": "《曹刿论战》"
+      }
+    ]
+  },
+  {
+    "word": "与",
+    "senses": [
+      {
+        "meaning": "同“欤”，语气词",
+        "sentence": "所识穷乏者得我与。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "给",
+        "sentence": "蹴尔而与之。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "同“举”，推举",
+        "sentence": "选贤与能。",
+        "source": "《大道之行也》"
+      },
+      {
+        "meaning": "参与；指欣赏、领悟",
+        "sentence": "未复有能与其奇者。",
+        "source": "《答谢中书书》"
+      }
+    ]
+  },
+  {
+    "word": "且",
+    "senses": [
+      {
+        "meaning": "况且",
+        "sentence": "且欲与常马等不可得。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "将近",
+        "sentence": "年且九十。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "临",
+    "senses": [
+      {
+        "meaning": "面对、对着、当着",
+        "sentence": "执策而临之。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "居高面下",
+        "sentence": "有亭翼然临于泉上者。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "为",
+    "senses": [
+      {
+        "meaning": "被／替",
+        "sentence": "其印为余群从所得。",
+        "source": "《活板》"
+      },
+      {
+        "meaning": "做，成为（酿造／作为／筑）",
+        "sentence": "酿泉为酒。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "举",
+    "senses": [
+      {
+        "meaning": "被举用",
+        "sentence": "百里奚举于市。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "推举",
+        "sentence": "是以众议举宠为督。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "发动，举事",
+        "sentence": "举大计亦死。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "成就",
+        "sentence": "死即举大名耳。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "被任用",
+        "sentence": "管夷吾举于士。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "义",
+    "senses": [
+      {
+        "meaning": "正义，仁义",
+        "sentence": "舍生而取义。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "适宜，恰当",
+        "sentence": "引喻失义。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "之",
+    "senses": [
+      {
+        "meaning": "的",
+        "sentence": "宫中之事。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "取消句子独立性，不译",
+        "sentence": "予独爱莲之出淤泥而不染。",
+        "source": "《爱莲说》"
+      },
+      {
+        "meaning": "补充音节，不译",
+        "sentence": "公将鼓之。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "到，往",
+        "sentence": "送杜少府之任蜀州。",
+        "source": "《送杜少府之任蜀州》"
+      },
+      {
+        "meaning": "宾语前置的标志，不译",
+        "sentence": "何陋之有。",
+        "source": "《陋室铭》"
+      },
+      {
+        "meaning": "代词，他/它/这件事",
+        "sentence": "悉以咨之。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "乎",
+    "senses": [
+      {
+        "meaning": "语气词，吗／呢",
+        "sentence": "是亦不可以已乎。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "介词，于、在",
+        "sentence": "在乎山水之间也。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "乐",
+    "senses": [
+      {
+        "meaning": "以……为乐",
+        "sentence": "好之者不如乐之者。",
+        "source": "《〈论语〉十二章》"
+      },
+      {
+        "meaning": "乐趣",
+        "sentence": "然而禽鸟知山林之乐，而不知人之乐。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "书",
+    "senses": [
+      {
+        "meaning": "书籍",
+        "sentence": "孤常读书。",
+        "source": "《孙权劝学》"
+      },
+      {
+        "meaning": "书信",
+        "sentence": "与朱元思书。",
+        "source": "《与朱元思书》"
+      },
+      {
+        "meaning": "写",
+        "sentence": "乃丹书帛曰。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "乱",
+    "senses": [
+      {
+        "meaning": "作乱",
+        "sentence": "盗窃乱贼而不作。",
+        "source": "《大道之行也》"
+      },
+      {
+        "meaning": "扰乱",
+        "sentence": "行拂乱其所为。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "亡",
+    "senses": [
+      {
+        "meaning": "灭亡",
+        "sentence": "国恒亡。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "无，没有",
+        "sentence": "身亡所寄。",
+        "source": "《杞人忧天》"
+      },
+      {
+        "meaning": "逃跑",
+        "sentence": "今亡亦死。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "丢失",
+        "sentence": "暮而果大亡其财。",
+        "source": "《智子疑邻》"
+      }
+    ]
+  },
+  {
+    "word": "从",
+    "senses": [
+      {
+        "meaning": "跟，随",
+        "sentence": "战则请从。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "顺从，听从",
+        "sentence": "民弗从也。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "自，由",
+        "sentence": "从口入，初极狭。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "令",
+    "senses": [
+      {
+        "meaning": "名词，号令",
+        "sentence": "军中闻将军令。",
+        "source": "《周亚夫军细柳》"
+      },
+      {
+        "meaning": "动词，号令",
+        "sentence": "召令徒属曰。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "使",
+        "sentence": "令辱之。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "即使、假若",
+        "sentence": "藉第令毋斩。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "以",
+    "senses": [
+      {
+        "meaning": "以致",
+        "sentence": "以伤先帝之明。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "因为",
+        "sentence": "不以物喜。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "认为",
+        "sentence": "或以为死，或以为亡。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "所以：用来……的",
+        "sentence": "此臣所以报先帝而忠陛下之职分也。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "……的原因",
+        "sentence": "此先汉所以兴隆也。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "介词：用",
+        "sentence": "醒能述以文者。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "凭、凭借",
+        "sentence": "以天下之所顺。",
+        "source": "《得道多助，失道寡助》"
+      },
+      {
+        "meaning": "拿，把",
+        "sentence": "悉以咨之。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "根据",
+        "sentence": "虽不能察，必以情。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "连词：表目的（来、用来）",
+        "sentence": "属予作文以记之。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "会",
+    "senses": [
+      {
+        "meaning": "恰逢",
+        "sentence": "会天大雨。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "集会",
+        "sentence": "多会于此。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "必将，一定",
+        "sentence": "会挽雕弓如满月。",
+        "source": "《江城子·密州出猎》"
+      }
+    ]
+  },
+  {
+    "word": "余",
+    "senses": [
+      {
+        "meaning": "剩下的、留下的",
+        "sentence": "以残年余力。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "第一人称，我",
+        "sentence": "尝贻余核舟一。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "整数后表不定的零数",
+        "sentence": "邹忌修八尺有余。",
+        "source": "《邹忌讽齐王纳谏》"
+      }
+    ]
+  },
+  {
+    "word": "作",
+    "senses": [
+      {
+        "meaning": "兴起",
+        "sentence": "盗窃乱贼而不作。",
+        "source": "《大道之行也》"
+      },
+      {
+        "meaning": "振作",
+        "sentence": "一鼓作气。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "做",
+        "sentence": "若有作奸犯科及为忠善者。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "使",
+    "senses": [
+      {
+        "meaning": "派遣",
+        "sentence": "上使外将兵。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "出使",
+        "sentence": "因使唐雎使于秦。",
+        "source": "《唐雎不辱使命》"
+      },
+      {
+        "meaning": "假使，假如",
+        "sentence": "使人之所恶莫甚于死者。",
+        "source": "《鱼我所欲也》"
+      }
+    ]
+  },
+  {
+    "word": "信",
+    "senses": [
+      {
+        "meaning": "信任、信用",
+        "sentence": "愿陛下亲之信之。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "实情",
+        "sentence": "牺牲玉帛，弗敢加也，必以信。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "诚信",
+        "sentence": "与朋友交而不信乎。",
+        "source": "《〈论语〉十二章》"
+      }
+    ]
+  },
+  {
+    "word": "修",
+    "senses": [
+      {
+        "meaning": "修建",
+        "sentence": "乃重修岳阳楼。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "长",
+        "sentence": "盖简桃核修狭者为之。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "培养",
+        "sentence": "讲信修睦。",
+        "source": "《大道之行也》"
+      }
+    ]
+  },
+  {
+    "word": "入",
+    "senses": [
+      {
+        "meaning": "进入",
+        "sentence": "意将隧入以攻其后也。",
+        "source": "《狼》"
+      },
+      {
+        "meaning": "指在国内",
+        "sentence": "入则无法家拂士。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "其",
+    "senses": [
+      {
+        "meaning": "代词，他的／它的",
+        "sentence": "以彰其咎。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "表反问语气，难道",
+        "sentence": "其真无马邪。",
+        "source": "《马说》"
+      }
+    ]
+  },
+  {
+    "word": "具",
+    "senses": [
+      {
+        "meaning": "同“俱”，全、都",
+        "sentence": "百废具兴。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "具有，具备",
+        "sentence": "各具情态。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "详细",
+        "sentence": "此人一一为具言所闻。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "再",
+    "senses": [
+      {
+        "meaning": "第二次",
+        "sentence": "再而衰。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "两次",
+        "sentence": "日再食。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "分",
+    "senses": [
+      {
+        "meaning": "划分，分开",
+        "sentence": "今天下三分。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "分配，分给",
+        "sentence": "必以分人。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "长度单位",
+        "sentence": "长约八分有奇。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "职分，职守",
+        "sentence": "忠陛下之职分也。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "加",
+    "senses": [
+      {
+        "meaning": "好处",
+        "sentence": "万钟于我何加焉。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "虚夸、夸大",
+        "sentence": "弗敢加也。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "增加",
+        "sentence": "而山不加增。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "去",
+    "senses": [
+      {
+        "meaning": "走开，离去",
+        "sentence": "委而去之。",
+        "source": "《得道多助，失道寡助》"
+      },
+      {
+        "meaning": "距离",
+        "sentence": "我以日始出时去人近。",
+        "source": "《两小儿辩日》"
+      }
+    ]
+  },
+  {
+    "word": "及",
+    "senses": [
+      {
+        "meaning": "到，等到",
+        "sentence": "及其家穿井。",
+        "source": "《穿井得一人》"
+      },
+      {
+        "meaning": "比得上",
+        "sentence": "徐公何能及君也。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "以及",
+        "sentence": "至霸上及棘门军。",
+        "source": "《周亚夫军细柳》"
+      }
+    ]
+  },
+  {
+    "word": "反",
+    "senses": [
+      {
+        "meaning": "同“返”，往返，返回",
+        "sentence": "始一反焉。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "反省",
+        "sentence": "然后能自反也。",
+        "source": "《虽有嘉肴》"
+      }
+    ]
+  },
+  {
+    "word": "发",
+    "senses": [
+      {
+        "meaning": "出发",
+        "sentence": "有时朝发白帝。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "显露，流露",
+        "sentence": "征于色，发于声。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "兴起，被任用",
+        "sentence": "舜发于畎亩之中。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "开放",
+        "sentence": "野芳发而幽香。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "头发",
+        "sentence": "黄发垂髫。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "征发",
+        "sentence": "发闾左適戍渔阳。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "可",
+    "senses": [
+      {
+        "meaning": "大约",
+        "sentence": "高可二黍许。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "可以",
+        "sentence": "珠可历历数也。",
+        "source": "《核舟记》"
+      }
+    ]
+  },
+  {
+    "word": "号",
+    "senses": [
+      {
+        "meaning": "大叫，呼啸",
+        "sentence": "阴风怒号。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "别号",
+        "sentence": "故自号曰醉翁也。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "名",
+    "senses": [
+      {
+        "meaning": "取名、命名",
+        "sentence": "名之者谁。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "出名，有名",
+        "sentence": "有仙则名。",
+        "source": "《陋室铭》"
+      },
+      {
+        "meaning": "出名的，著名的",
+        "sentence": "故虽有名马。",
+        "source": "《马说》"
+      }
+    ]
+  },
+  {
+    "word": "固",
+    "senses": [
+      {
+        "meaning": "固然",
+        "sentence": "我非子，固不知子矣。",
+        "source": "《庄子与惠子游于濠梁之上》"
+      },
+      {
+        "meaning": "一定、必定",
+        "sentence": "其将固可袭而虏也。",
+        "source": "《周亚夫军细柳》"
+      },
+      {
+        "meaning": "顽固、固执",
+        "sentence": "汝心之固。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "巩固",
+        "sentence": "固国不以山溪之险。",
+        "source": "《得道多助，失道寡助》"
+      }
+    ]
+  },
+  {
+    "word": "国",
+    "senses": [
+      {
+        "meaning": "国家",
+        "sentence": "国恒亡。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "国都",
+        "sentence": "则有去国怀乡。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "国防",
+        "sentence": "固国不以山溪之险。",
+        "source": "《得道多助，失道寡助》"
+      }
+    ]
+  },
+  {
+    "word": "夷",
+    "senses": [
+      {
+        "meaning": "平，平坦",
+        "sentence": "其船背稍夷。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "平易，平和",
+        "sentence": "言和而色夷。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "平安",
+        "sentence": "化险为夷。",
+        "source": "（成语）"
+      }
+    ]
+  },
+  {
+    "word": "奇",
+    "senses": [
+      {
+        "meaning": "奇特",
+        "sentence": "明有奇巧人。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "零数、余数",
+        "sentence": "长约八分有奇。",
+        "source": "《核舟记》"
+      }
+    ]
+  },
+  {
+    "word": "奉",
+    "senses": [
+      {
+        "meaning": "侍奉",
+        "sentence": "为妻妾之奉。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "接受，奉行",
+        "sentence": "奉命于危难之间。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "供养",
+        "sentence": "不知口体之奉不若人也。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "奔",
+    "senses": [
+      {
+        "meaning": "急走，跑",
+        "sentence": "屠乃奔倚其下。",
+        "source": "《狼》"
+      },
+      {
+        "meaning": "指飞奔的马",
+        "sentence": "虽乘奔御风，不以疾也。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "如",
+    "senses": [
+      {
+        "meaning": "比得上",
+        "sentence": "天时不如地利。",
+        "source": "《得道多助，失道寡助》"
+      },
+      {
+        "meaning": "像",
+        "sentence": "悉如外人。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "子",
+    "senses": [
+      {
+        "meaning": "先生、老师",
+        "sentence": "子曰：“温故而知新，可以为师矣。”",
+        "source": "《〈论语〉十二章》"
+      },
+      {
+        "meaning": "你",
+        "sentence": "子非鱼，安知鱼之乐。",
+        "source": "《庄子与惠子游于濠梁之上》"
+      },
+      {
+        "meaning": "儿子",
+        "sentence": "子又生孙。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "安",
+    "senses": [
+      {
+        "meaning": "安逸",
+        "sentence": "生于忧患，死于安乐。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "安身",
+        "sentence": "衣食所安，弗敢专也。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "怎么，哪里",
+        "sentence": "燕雀安知鸿鹄之志哉。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "寻",
+    "senses": [
+      {
+        "meaning": "寻找",
+        "sentence": "寻向所志。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "不久",
+        "sentence": "寻病终。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "少",
+    "senses": [
+      {
+        "meaning": "年轻",
+        "sentence": "自谓少时用心于学甚劳。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "不多",
+        "sentence": "饮少辄醉。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "缺少",
+        "sentence": "但少闲人如吾两人者耳。",
+        "source": "《记承天寺夜游》"
+      }
+    ]
+  },
+  {
+    "word": "尤",
+    "senses": [
+      {
+        "meaning": "格外",
+        "sentence": "水尤清冽。",
+        "source": "《小石潭记》"
+      },
+      {
+        "meaning": "责怪",
+        "sentence": "怨天尤人。",
+        "source": "（成语）"
+      }
+    ]
+  },
+  {
+    "word": "屈",
+    "senses": [
+      {
+        "meaning": "委屈、屈尊",
+        "sentence": "猥自枉屈。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "弯曲",
+        "sentence": "手指不可屈伸。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "属",
+    "senses": [
+      {
+        "meaning": "类",
+        "sentence": "有良田、美池、桑竹之属。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "相同，类似",
+        "sentence": "神情与苏、黄不属。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "同“嘱”，嘱托",
+        "sentence": "属予作文以记之。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "连接",
+        "sentence": "属引凄异。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "已",
+    "senses": [
+      {
+        "meaning": "已经",
+        "sentence": "骨已尽矣。",
+        "source": "《狼》"
+      },
+      {
+        "meaning": "停止",
+        "sentence": "学不可以已。",
+        "source": "《劝学》"
+      }
+    ]
+  },
+  {
+    "word": "师",
+    "senses": [
+      {
+        "meaning": "老师",
+        "sentence": "三人行，必有我师焉。",
+        "source": "《〈论语〉十二章》"
+      },
+      {
+        "meaning": "军队",
+        "sentence": "十年春，齐师伐我。",
+        "source": "《曹刿论战》"
+      }
+    ]
+  },
+  {
+    "word": "开",
+    "senses": [
+      {
+        "meaning": "散开、打开",
+        "sentence": "日出而林霏开。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "放晴",
+        "sentence": "连月不开。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "引",
+    "senses": [
+      {
+        "meaning": "拉，牵拉",
+        "sentence": "下车引之。",
+        "source": "《陈太丘与友期行》"
+      },
+      {
+        "meaning": "称引",
+        "sentence": "引喻失义。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "延长",
+        "sentence": "属引凄异。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "强",
+    "senses": [
+      {
+        "meaning": "勉励",
+        "sentence": "知困，然后能自强也。",
+        "source": "《虽有嘉肴》"
+      },
+      {
+        "meaning": "有余",
+        "sentence": "赏赐百千强。",
+        "source": "《木兰诗》"
+      }
+    ]
+  },
+  {
+    "word": "归",
+    "senses": [
+      {
+        "meaning": "归去，返回",
+        "sentence": "太守归而宾客从也。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "归依",
+        "sentence": "微斯人，吾谁与归。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "得",
+    "senses": [
+      {
+        "meaning": "得到，获得",
+        "sentence": "故不为苟得也。",
+        "source": "《鱼我所欲也》"
+      },
+      {
+        "meaning": "领会",
+        "sentence": "得之心而寓之酒也。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "同“德”，感激",
+        "sentence": "所识穷乏者得我与。",
+        "source": "《鱼我所欲也》"
+      }
+    ]
+  },
+  {
+    "word": "志",
+    "senses": [
+      {
+        "meaning": "标记、做标记",
+        "sentence": "寻向所志。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "志向",
+        "sentence": "匹夫不可夺志也。",
+        "source": "《〈论语〉十二章》"
+      }
+    ]
+  },
+  {
+    "word": "惠",
+    "senses": [
+      {
+        "meaning": "同“慧”，聪明",
+        "sentence": "汝之不惠。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "恩惠",
+        "sentence": "大王加惠。",
+        "source": "《唐雎不辱使命》"
+      }
+    ]
+  },
+  {
+    "word": "或",
+    "senses": [
+      {
+        "meaning": "有时",
+        "sentence": "一食或尽粟一石。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "或许，倘若",
+        "sentence": "或异二者之为。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "有人",
+        "sentence": "今或闻无罪。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "所以",
+    "senses": [
+      {
+        "meaning": "用来",
+        "sentence": "所以动心忍性。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "……原因",
+        "sentence": "此先汉所以兴隆也。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "拂",
+    "senses": [
+      {
+        "meaning": "同“弼”，辅佐",
+        "sentence": "入则无法家拂士。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "违背",
+        "sentence": "行拂乱其所为。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "指",
+    "senses": [
+      {
+        "meaning": "手指",
+        "sentence": "手指不可屈伸。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "直",
+        "sentence": "指通豫南，达于汉阴。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "同“旨”",
+        "sentence": "卜者知其指意。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "指着",
+        "sentence": "皆指目陈胜。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "损",
+    "senses": [
+      {
+        "meaning": "损害",
+        "sentence": "至于斟酌损益。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "削减",
+        "sentence": "曾不能损魁父之丘。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "故",
+    "senses": [
+      {
+        "meaning": "故意",
+        "sentence": "广故数言欲亡。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "学过的知识",
+        "sentence": "温故而知新。",
+        "source": "《〈论语〉十二章》"
+      },
+      {
+        "meaning": "原来",
+        "sentence": "而两狼之并驱如故。",
+        "source": "《狼》"
+      },
+      {
+        "meaning": "所以",
+        "sentence": "故天将降大任于是人也。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "原因，缘故",
+        "sentence": "公问其故。",
+        "source": "《曹刿论战》"
+      }
+    ]
+  },
+  {
+    "word": "敌",
+    "senses": [
+      {
+        "meaning": "攻击",
+        "sentence": "恐前后受其敌。",
+        "source": "《狼》"
+      },
+      {
+        "meaning": "敌人",
+        "sentence": "盖以诱敌。",
+        "source": "《狼》"
+      }
+    ]
+  },
+  {
+    "word": "文",
+    "senses": [
+      {
+        "meaning": "文字",
+        "sentence": "文曰“初平山人”。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "文章",
+        "sentence": "属予作文以记之。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "方",
+    "senses": [
+      {
+        "meaning": "方圆，指面积",
+        "sentence": "方七百里。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "正，正当",
+        "sentence": "方欲行。",
+        "source": "《狼》"
+      }
+    ]
+  },
+  {
+    "word": "是",
+    "senses": [
+      {
+        "meaning": "判断动词，是",
+        "sentence": "问今是何世。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "代词，这",
+        "sentence": "是焉得为大丈夫乎。",
+        "source": "《富贵不能淫》"
+      }
+    ]
+  },
+  {
+    "word": "曾",
+    "senses": [
+      {
+        "meaning": "副词，常与“不”连用，译为“连……都不……”",
+        "sentence": "曾不若孀妻弱子。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "曾经",
+        "sentence": "似曾相识燕归来。",
+        "source": "《浣溪沙》"
+      },
+      {
+        "meaning": "同“层”，重叠",
+        "sentence": "荡胸生曾云。",
+        "source": "《望岳》"
+      },
+      {
+        "meaning": "竟然",
+        "sentence": "曾不盈寸。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "同“增”，增加",
+        "sentence": "曾益其所不能。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "期",
+    "senses": [
+      {
+        "meaning": "约会、约定",
+        "sentence": "陈太丘与友期行。",
+        "source": "《陈太丘与友期行》"
+      },
+      {
+        "meaning": "①日子；②期限",
+        "sentence": "君问归期未有期。",
+        "source": "《夜雨寄北》"
+      },
+      {
+        "meaning": "满",
+        "sentence": "期年之后。",
+        "source": "《邹忌讽齐王纳谏》"
+      }
+    ]
+  },
+  {
+    "word": "极",
+    "senses": [
+      {
+        "meaning": "尽头、穷尽",
+        "sentence": "此乐何极。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "非常、最",
+        "sentence": "初极狭。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "果",
+    "senses": [
+      {
+        "meaning": "果然",
+        "sentence": "暮而果大亡其财。",
+        "source": "《智子疑邻》"
+      },
+      {
+        "meaning": "实现",
+        "sentence": "未果，寻病终。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "次",
+    "senses": [
+      {
+        "meaning": "编次",
+        "sentence": "皆次当行。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "停宿",
+        "sentence": "次北固山下。",
+        "source": "《次北固山下》"
+      },
+      {
+        "meaning": "驻扎",
+        "sentence": "之次所旁丛祠中。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "比",
+    "senses": [
+      {
+        "meaning": "靠近",
+        "sentence": "其两膝相比者。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "等到",
+        "sentence": "比至陈。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "焉",
+    "senses": [
+      {
+        "meaning": "哪里",
+        "sentence": "且焉置土石。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "句末语气词",
+        "sentence": "始一反焉。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "然",
+    "senses": [
+      {
+        "meaning": "对，正确",
+        "sentence": "不以为然。",
+        "source": "《报刘一丈书》"
+      },
+      {
+        "meaning": "……的样子",
+        "sentence": "颓然乎其间者。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "然而，但是",
+        "sentence": "然侍卫之臣不懈于内。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "这样",
+        "sentence": "然则北通巫峡。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "盈",
+    "senses": [
+      {
+        "meaning": "满",
+        "sentence": "曾不盈寸。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "充满，士气正旺盛",
+        "sentence": "彼竭我盈。",
+        "source": "《曹刿论战》"
+      }
+    ]
+  },
+  {
+    "word": "益",
+    "senses": [
+      {
+        "meaning": "增加",
+        "sentence": "曾益其所不能。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "益处，好处",
+        "sentence": "有所广益。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "称",
+    "senses": [
+      {
+        "meaning": "称赞",
+        "sentence": "先帝称之曰能。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "著称",
+        "sentence": "不以千里称也。",
+        "source": "《马说》"
+      }
+    ]
+  },
+  {
+    "word": "空",
+    "senses": [
+      {
+        "meaning": "天空",
+        "sentence": "浊浪排空。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "消散",
+        "sentence": "而或长烟一空。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "澄澈",
+        "sentence": "庭下如积水空明。",
+        "source": "《记承天寺夜游》"
+      },
+      {
+        "meaning": "空寂",
+        "sentence": "空谷传响。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "等",
+    "senses": [
+      {
+        "meaning": "等同，一样",
+        "sentence": "等死，死国可乎。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "多数或列举未尽",
+        "sentence": "公等遇雨。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "策",
+    "senses": [
+      {
+        "meaning": "马鞭",
+        "sentence": "执策而临之。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "鞭打",
+        "sentence": "策之不以其道。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "记录",
+        "sentence": "策勋十二转。",
+        "source": "《木兰诗》"
+      }
+    ]
+  },
+  {
+    "word": "素",
+    "senses": [
+      {
+        "meaning": "朴素，不加装饰的",
+        "sentence": "可以调素琴。",
+        "source": "《陋室铭》"
+      },
+      {
+        "meaning": "白色的",
+        "sentence": "则素湍绿潭。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "绝",
+    "senses": [
+      {
+        "meaning": "断、断绝",
+        "sentence": "往来而不绝者。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "极、非常",
+        "sentence": "佛印绝类弥勒。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "与世隔绝",
+        "sentence": "率妻子邑人来此绝境。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "停止",
+        "sentence": "空谷传响，哀转久绝。",
+        "source": "《三峡》"
+      }
+    ]
+  },
+  {
+    "word": "罔",
+    "senses": [
+      {
+        "meaning": "无，没有",
+        "sentence": "罔不因势象形。",
+        "source": "《核舟记》"
+      },
+      {
+        "meaning": "迷惑，感到迷茫而无所适从",
+        "sentence": "学而不思则罔。",
+        "source": "《〈论语〉十二章》"
+      }
+    ]
+  },
+  {
+    "word": "胜",
+    "senses": [
+      {
+        "meaning": "得胜，胜利",
+        "sentence": "射者中，弈者胜。",
+        "source": "《醉翁亭记》"
+      },
+      {
+        "meaning": "取胜",
+        "sentence": "此所谓战胜于朝廷。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "美好的",
+        "sentence": "予观夫巴陵胜状。",
+        "source": "《岳阳楼记》"
+      }
+    ]
+  },
+  {
+    "word": "自",
+    "senses": [
+      {
+        "meaning": "于、在",
+        "sentence": "自三峡七百里中。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "如果",
+        "sentence": "自非亭午夜分。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "另自、另外",
+        "sentence": "一板已自布字。",
+        "source": "《活板》"
+      },
+      {
+        "meaning": "自己",
+        "sentence": "自以为大有所益。",
+        "source": "《孙权劝学》"
+      },
+      {
+        "meaning": "自、从",
+        "sentence": "自富阳至桐庐一百许里。",
+        "source": "《与朱元思书》"
+      }
+    ]
+  },
+  {
+    "word": "至",
+    "senses": [
+      {
+        "meaning": "极，最",
+        "sentence": "虽有至道。",
+        "source": "《虽有嘉肴》"
+      },
+      {
+        "meaning": "到",
+        "sentence": "日中不至。",
+        "source": "《陈太丘与友期行》"
+      },
+      {
+        "meaning": "周到",
+        "sentence": "色愈恭，礼愈至。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "舍",
+    "senses": [
+      {
+        "meaning": "客舍、房屋",
+        "sentence": "屋舍俨然。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "舍弃、放弃",
+        "sentence": "便舍船，从口入。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "止息",
+        "sentence": "逝者如斯夫，不舍昼夜。",
+        "source": "《〈论语〉十二章》"
+      },
+      {
+        "meaning": "同“释”，解除、消除",
+        "sentence": "其人舍然大喜。",
+        "source": "《杞人忧天》"
+      }
+    ]
+  },
+  {
+    "word": "良",
+    "senses": [
+      {
+        "meaning": "甚，很",
+        "sentence": "良多趣味。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "善良",
+        "sentence": "此皆良实。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "肥沃",
+        "sentence": "有良田、美池、桑竹之属。",
+        "source": "《桃花源记》"
+      }
+    ]
+  },
+  {
+    "word": "若",
+    "senses": [
+      {
+        "meaning": "及，比得上",
+        "sentence": "曾不若孀妻弱子。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "如果",
+        "sentence": "若止印三二本。",
+        "source": "《活板》"
+      },
+      {
+        "meaning": "像，好像",
+        "sentence": "海内存知己，天涯若比邻。",
+        "source": "《送杜少府之任蜀州》"
+      },
+      {
+        "meaning": "你",
+        "sentence": "若为佣耕。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "苦",
+    "senses": [
+      {
+        "meaning": "愁苦，担心",
+        "sentence": "何苦而不平。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "使……苦",
+        "sentence": "苦其心志。",
+        "source": "《生于忧患，死于安乐》"
+      }
+    ]
+  },
+  {
+    "word": "薄",
+    "senses": [
+      {
+        "meaning": "迫近",
+        "sentence": "薄暮冥冥。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "轻视",
+        "sentence": "不宜妄自菲薄。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "虽",
+    "senses": [
+      {
+        "meaning": "即使",
+        "sentence": "虽乘奔御风。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "虽然",
+        "sentence": "故余虽愚，卒获有所闻。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "行",
+    "senses": [
+      {
+        "meaning": "行为",
+        "sentence": "行拂乱其所为。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "列，队伍",
+        "sentence": "皆次当行。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "见",
+    "senses": [
+      {
+        "meaning": "拜见",
+        "sentence": "于是入朝见威王。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "同“现”，表现",
+        "sentence": "才美不外见。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "看见",
+        "sentence": "明灭可见。",
+        "source": "《小石潭记》"
+      }
+    ]
+  },
+  {
+    "word": "观",
+    "senses": [
+      {
+        "meaning": "看，欣赏",
+        "sentence": "予观夫巴陵胜状。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "景象",
+        "sentence": "此则岳阳楼之大观也。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "阅读",
+        "sentence": "余因得遍观群书。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "许",
+    "senses": [
+      {
+        "meaning": "答应，赞成",
+        "sentence": "杂然相许。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "大约",
+        "sentence": "潭中鱼可百许头。",
+        "source": "《小石潭记》"
+      }
+    ]
+  },
+  {
+    "word": "诚",
+    "senses": [
+      {
+        "meaning": "真正，确实",
+        "sentence": "公孙衍、张仪岂不诚大丈夫哉。",
+        "source": "《富贵不能淫》"
+      },
+      {
+        "meaning": "如果",
+        "sentence": "今诚以吾众诈自称公子扶苏、项燕。",
+        "source": "《陈涉世家》"
+      },
+      {
+        "meaning": "诚心",
+        "sentence": "帝感其诚。",
+        "source": "《愚公移山》"
+      }
+    ]
+  },
+  {
+    "word": "说",
+    "senses": [
+      {
+        "meaning": "讲，谈论，叙述",
+        "sentence": "及郡下，诣太守，说如此。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "同“悦”，愉快",
+        "sentence": "不亦说乎。",
+        "source": "《〈论语〉十二章》"
+      }
+    ]
+  },
+  {
+    "word": "诸",
+    "senses": [
+      {
+        "meaning": "相当于“之于”",
+        "sentence": "投诸渤海之尾。",
+        "source": "《愚公移山》"
+      },
+      {
+        "meaning": "各位，各个",
+        "sentence": "其西南诸峰。",
+        "source": "《醉翁亭记》"
+      }
+    ]
+  },
+  {
+    "word": "谢",
+    "senses": [
+      {
+        "meaning": "道歉",
+        "sentence": "长跪而谢之。",
+        "source": "《唐雎不辱使命》"
+      },
+      {
+        "meaning": "问候，致意",
+        "sentence": "使人称谢。",
+        "source": "《周亚夫军细柳》"
+      }
+    ]
+  },
+  {
+    "word": "足",
+    "senses": [
+      {
+        "meaning": "值得，足以",
+        "sentence": "以中有足乐者。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "脚",
+        "sentence": "足肤皲裂而不知。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "辞",
+    "senses": [
+      {
+        "meaning": "推托，推辞",
+        "sentence": "蒙辞以军中多务。",
+        "source": "《孙权劝学》"
+      },
+      {
+        "meaning": "告辞，告别",
+        "sentence": "停数日，辞去。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "言辞，说的话",
+        "sentence": "未尝稍降辞色。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "过",
+    "senses": [
+      {
+        "meaning": "经过",
+        "sentence": "及鲁肃过寻阳。",
+        "source": "《孙权劝学》"
+      },
+      {
+        "meaning": "犯错误",
+        "sentence": "人恒过，然后能改。",
+        "source": "《生于忧患，死于安乐》"
+      },
+      {
+        "meaning": "过失",
+        "sentence": "群臣吏民能面刺寡人之过者。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "过于",
+        "sentence": "以其境过清。",
+        "source": "《小石潭记》"
+      },
+      {
+        "meaning": "超过",
+        "sentence": "况才之过于余者乎。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "通",
+    "senses": [
+      {
+        "meaning": "通过",
+        "sentence": "初极狭，才通人。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "顺利",
+        "sentence": "政通人和。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "通向",
+        "sentence": "然则北通巫峡。",
+        "source": "《岳阳楼记》"
+      },
+      {
+        "meaning": "通晓",
+        "sentence": "鸣之而不能通其意。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "贯通",
+        "sentence": "中通外直。",
+        "source": "《爱莲说》"
+      }
+    ]
+  },
+  {
+    "word": "道",
+    "senses": [
+      {
+        "meaning": "讲，说",
+        "sentence": "不足为外人道也。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "学说",
+        "sentence": "益慕圣贤之道。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "方法",
+        "sentence": "策之不以其道。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "道路",
+        "sentence": "伐竹取道。",
+        "source": "《小石潭记》"
+      }
+    ]
+  },
+  {
+    "word": "遗",
+    "senses": [
+      {
+        "meaning": "给予，赠送",
+        "sentence": "父母岁有裘葛之遗。",
+        "source": "《送东阳马生序》"
+      },
+      {
+        "meaning": "遗留",
+        "sentence": "以光先帝遗德。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "间",
+    "senses": [
+      {
+        "meaning": "间隔，隔开",
+        "sentence": "遂与外人间隔。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "间或，偶然",
+        "sentence": "时时而间进。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "期间",
+        "sentence": "奉命于危难之间。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "参与",
+        "sentence": "肉食者鄙，又何间焉。",
+        "source": "《曹刿论战》"
+      },
+      {
+        "meaning": "私下",
+        "sentence": "又间令吴广之次所旁丛祠中。",
+        "source": "《陈涉世家》"
+      }
+    ]
+  },
+  {
+    "word": "闻",
+    "senses": [
+      {
+        "meaning": "闻名，扬名",
+        "sentence": "不求闻达于诸侯。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "使……听到",
+        "sentence": "闻寡人之耳者。",
+        "source": "《邹忌讽齐王纳谏》"
+      },
+      {
+        "meaning": "听见，听到",
+        "sentence": "鸡犬相闻。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "收获",
+        "sentence": "卒获有所闻。",
+        "source": "《送东阳马生序》"
+      }
+    ]
+  },
+  {
+    "word": "阙",
+    "senses": [
+      {
+        "meaning": "宫殿",
+        "sentence": "不知天上宫阙。",
+        "source": "《水调歌头》"
+      },
+      {
+        "meaning": "同“缺”，空隙，缺口",
+        "sentence": "略无阙处。",
+        "source": "《三峡》"
+      },
+      {
+        "meaning": "缺失",
+        "sentence": "必能裨补阙漏。",
+        "source": "《出师表》"
+      }
+    ]
+  },
+  {
+    "word": "顾",
+    "senses": [
+      {
+        "meaning": "回头看",
+        "sentence": "元方入门不顾。",
+        "source": "《陈太丘与友期行》"
+      },
+      {
+        "meaning": "拜访",
+        "sentence": "三顾臣于草庐之中。",
+        "source": "《出师表》"
+      },
+      {
+        "meaning": "顾及，注意",
+        "sentence": "顾全大局。",
+        "source": "（成语）"
+      }
+    ]
+  },
+  {
+    "word": "食",
+    "senses": [
+      {
+        "meaning": "吃",
+        "sentence": "食不饱，力不足。",
+        "source": "《马说》"
+      },
+      {
+        "meaning": "食物",
+        "sentence": "设酒杀鸡作食。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "同“饲”，喂养",
+        "sentence": "食之不能尽其材。",
+        "source": "《马说》"
+      }
+    ]
+  },
+  {
+    "word": "鲜",
+    "senses": [
+      {
+        "meaning": "新鲜",
+        "sentence": "芳草鲜美。",
+        "source": "《桃花源记》"
+      },
+      {
+        "meaning": "少",
+        "sentence": "陶后鲜有闻。",
+        "source": "《爱莲说》"
+      }
+    ]
+  }
+];
+
+window.BANK_META = {
+  "source": "中考精编·古诗文",
+  "section": "第三章 文言文阅读 ·【三】初中文言文一词多义汇编",
+  "words": 114,
+  "questions": 327,
+  "scope": "《中考精编》一词多义汇编所引全部篇目（含九年级下册与课外）",
+  "sources": 48,
+  "outOfScope": 0
+};
+</script>
+<script>
+/* ==========================================================================
+   一词多义 · 斩词达人
+   Content source: 《中考精编·讲义册（古诗文）》 第三章 文言文阅读
+   收录该表所引全部篇目（含九下与课外篇目）。
+   ========================================================================== */
+'use strict';
+
+/* ------------------------------------------------------------------ utils */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const LS = {
+  roster: 'ycdy.roster.v1',
+  board:  'ycdy.board.v1',
+  best:   'ycdy.best.v1',
+  who:    'ycdy.who.v1',
+};
+
+const DEFAULT_ROSTER = ['学生01', '学生02', '学生03', '学生04', '学生05',
+                        '学生06', '学生07', '学生08', '学生09', '学生10'];
+
+const MODES = {
+  quick:    { name: '快问快答', total: 20,   perQuestion: 15, lives: 0, timed: 0,    points: 10 },
+  timed:    { name: '限时挑战', total: 9999, perQuestion: 0,  lives: 0, timed: 180,  points: 10 },
+  survival: { name: '闯关模式', total: 9999, perQuestion: 20, lives: 3, timed: 0,    points: 12 },
+  all:      { name: '全部题目', total: 9999, perQuestion: 0,  lives: 0, timed: 0,    points: 6  },
+};
+
+const shuffle = a => {
+  const x = a.slice();
+  for (let i = x.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [x[i], x[j]] = [x[j], x[i]];
+  }
+  return x;
+};
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const fmtTime = ms => {
+  const s = Math.max(0, Math.round(ms / 1000));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+};
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* ------------------------------------------------------------ persistence */
+function loadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const val = JSON.parse(raw);
+    return val == null ? fallback : val;
+  } catch (e) { return fallback; }
+}
+function saveJSON(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* ignore */ }
+}
+
+/* ------------------------------------------------------------- build pool */
+function buildPool() {
+  const bank = Array.isArray(window.QUESTION_BANK) ? window.QUESTION_BANK : [];
+  const pool = [];
+  for (const item of bank) {
+    const senses = Array.isArray(item.senses) ? item.senses : [];
+    for (const s of senses) {
+      if (!s || !s.sentence || !s.meaning) continue;
+      pool.push({
+        word: item.word,
+        meaning: s.meaning,
+        sentence: s.sentence,
+        source: s.source || item.source || '',
+        allSenses: senses.map(x => x.meaning),
+      });
+    }
+  }
+  return pool;
+}
+
+/* ---------------------------------------------------------- question maker */
+function makeQuestion(entry, pool, recentlyUsed) {
+  const correct = entry.meaning;
+  const used = new Set([correct]);
+  const distractors = [];
+
+  // Prefer other meanings of the same character: that is the real 一词多义 skill.
+  const sameWord = shuffle(entry.allSenses.filter(m => m !== correct));
+  for (const m of sameWord) {
+    if (distractors.length >= 3) break;
+    if (used.has(m)) continue;
+    used.add(m); distractors.push(m);
+  }
+
+  // Then fall back to meanings of other characters in the bank.
+  if (distractors.length < 3) {
+    const others = shuffle(pool.map(p => p.meaning).filter(m => !used.has(m)));
+    for (const m of others) {
+      if (distractors.length >= 3) break;
+      used.add(m); distractors.push(m);
+    }
+  }
+
+  const options = shuffle([correct, ...distractors]);
+  return {
+    ...entry,
+    options,
+    answerIndex: options.indexOf(correct),
+  };
+}
+
+/* ------------------------------------------------------------------- state */
+const state = {
+  screen: 'home',
+  name: '',
+  mode: 'quick',
+  queue: [],
+  idx: 0,
+  score: 0,
+  combo: 0,
+  maxCombo: 0,
+  correct: 0,
+  answered: 0,
+  lives: 0,
+  locked: false,
+  log: [],
+  startAt: 0,
+  questionStartAt: 0,
+  globalLeft: 0,
+  tick: null,
+  lastTick: 0,
+  perQuestionLeft: 0,
+  pool: [],
+  boardScope: 'all',
+  lastResult: null,
+};
+
+/* --------------------------------------------------------------- rendering */
+function show(screen) {
+  state.screen = screen;
+  for (const s of ['home', 'quiz', 'result', 'board', 'cards']) {
+    $('#' + s).classList.toggle('hidden', s !== screen);
+  }
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+
+function renderRoster() {
+  const roster = loadJSON(LS.roster, DEFAULT_ROSTER);
+  const grid = $('#nameGrid');
+  grid.innerHTML = '';
+  if (!roster.length) {
+    grid.innerHTML = '<div class="note" style="grid-column:1/-1">名单为空，请在下方手动输入姓名。</div>';
+  }
+  for (const n of roster) {
+    const b = document.createElement('button');
+    b.className = 'nameBtn' + (n === state.name ? ' on' : '');
+    b.textContent = n;
+    b.addEventListener('click', () => {
+      state.name = n;
+      $('#nameInput').value = n;
+      renderRoster();
+      updateChips();
+    });
+    grid.appendChild(b);
+  }
+}
+
+function updateChips() {
+  const src = (window.BANK_META && window.BANK_META.source) || '';
+  $('#chipBank').innerHTML = '词库 <b>' + state.pool.length + '</b> 题' +
+    (src ? ' <span style="color:var(--dim)">（' + src + '）</span>' : '');
+  const best = loadJSON(LS.best, {});
+  const b = state.name ? (best[state.name] || 0) : 0;
+  $('#chipBest').innerHTML = '本人最佳 <b>' + (b || '—') + '</b>';
+}
+
+const MODE_NOTES = {
+  quick: '每题 15 秒。答对基础 10 分，连击与答题速度额外加分；超时算错。',
+  timed: '总时长 3 分钟。答对 +10 分并连击加分，答错倒扣 2 秒。',
+  survival: '起始 3 条命，答错扣 1 条命，答完即止。每题 20 秒。',
+  all: '不限时，覆盖题库全部词条，每题 6 分，适合系统过一遍。',
+};
+
+function renderModes() {
+  $$('#modes .mode').forEach(el => {
+    el.classList.toggle('on', el.dataset.mode === state.mode);
+  });
+  $('#modeNote').textContent = MODE_NOTES[state.mode] || '';
+}
+
+/* --------------------------------------------------------------- quiz flow */
+function startQuiz() {
+  const name = ($('#nameInput').value || '').trim();
+  state.name = name || state.name;
+  if (!state.name) {
+    $('#nameInput').focus();
+    $('#nameInput').style.borderColor = 'var(--bad)';
+    setTimeout(() => { $('#nameInput').style.borderColor = ''; }, 1200);
+    return;
+  }
+  saveJSON(LS.who, state.name);
+
+  const cfg = MODES[state.mode];
+  let pool = state.pool;
+  if (state.mode === 'quick') {
+    pool = shuffle(pool).slice(0, Math.min(cfg.total, pool.length));
+  } else if (state.mode === 'all') {
+    pool = shuffle(pool);
+  } else {
+    pool = shuffle(pool);
+  }
+  if (!pool.length) { alert('题库为空，请检查 data/questions.js'); return; }
+
+  state.queue = pool;
+  state.idx = 0;
+  state.score = 0;
+  state.combo = 0;
+  state.maxCombo = 0;
+  state.correct = 0;
+  state.answered = 0;
+  state.lives = cfg.lives;
+  state.log = [];
+  state.locked = false;
+  state.startAt = performance.now();
+  state.globalLeft = cfg.timed * 1000;
+  state.lastTick = performance.now();
+
+  show('quiz');
+  nextQuestion();
+  startTicker();
+}
+
+function startTicker() {
+  stopTicker();
+  state.tick = setInterval(() => {
+    const now = performance.now();
+    const dt = now - state.lastTick;
+    state.lastTick = now;
+    const cfg = MODES[state.mode];
+
+    if (cfg.timed) {
+      state.globalLeft -= dt;
+      if (state.globalLeft <= 0) { state.globalLeft = 0; renderTimer(); finish('时间到'); return; }
+    }
+    if (!state.locked && cfg.perQuestion) {
+      state.perQuestionLeft -= dt;
+      if (state.perQuestionLeft <= 0) { state.perQuestionLeft = 0; renderTimer(); answer(-1, true); return; }
+    }
+    renderTimer();
+  }, 100);
+}
+function stopTicker() { if (state.tick) { clearInterval(state.tick); state.tick = null; } }
+
+function renderTimer() {
+  const cfg = MODES[state.mode];
+  const el = $('#timer');
+  if (cfg.timed) {
+    el.textContent = fmtTime(state.globalLeft);
+    el.classList.toggle('low', state.globalLeft < 20000);
+  } else if (cfg.perQuestion) {
+    el.textContent = Math.ceil(state.perQuestionLeft / 1000) + 's';
+    el.classList.toggle('low', state.perQuestionLeft < 5000);
+  } else {
+    el.textContent = fmtTime(performance.now() - state.startAt);
+    el.classList.remove('low');
+  }
+}
+
+function nextQuestion() {
+  const cfg = MODES[state.mode];
+  if (state.idx >= state.queue.length) { finish('答完啦'); return; }
+  if (cfg.lives && state.lives <= 0) { finish('命用完了'); return; }
+
+  const entry = state.queue[state.idx];
+  const q = makeQuestion(entry, state.pool, null);
+  state.current = q;
+  state.locked = false;
+  state.questionStartAt = performance.now();
+  state.perQuestionLeft = cfg.perQuestion * 1000;
+
+  const total = state.mode === 'quick' ? state.queue.length : null;
+  $('#qIndex').textContent = total
+    ? `第 ${state.idx + 1} / ${total} 题`
+    : `第 ${state.idx + 1} 题`;
+  $('#qScore').textContent = '得分 ' + state.score;
+  $('#combo').textContent = state.combo >= 2 ? `🔥 ${state.combo} 连击` : (cfg.lives ? `❤️ ${state.lives}` : '');
+
+  const m = q.sentence.match(new RegExp('^(.*?)(' + q.word + ')(.*)$'));
+  $('#sentence').innerHTML = m
+    ? esc(m[1]) + '<span class="hl">' + esc(m[2]) + '</span>' + esc(m[3])
+    : esc(q.sentence);
+  $('#qSrc').textContent = q.source ? '—— ' + q.source : '';
+  $('#qWord').textContent = q.word;
+
+  const box = $('#opts');
+  box.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="k">' + (i + 1) + '</span><span>' + esc(opt) + '</span>';
+    b.addEventListener('click', () => answer(i, false));
+    box.appendChild(b);
+  });
+  $('#fb').innerHTML = '';
+  renderProgress();
+  renderTimer();
+}
+
+function renderProgress() {
+  const total = state.mode === 'quick' ? state.queue.length : null;
+  const pct = total ? (state.idx / total) * 100
+                    : clamp((state.idx / Math.max(1, state.pool.length)) * 100, 0, 100);
+  $('#progBar').style.width = pct + '%';
+}
+
+function answer(choice, timedOut) {
+  if (state.locked) return;
+  state.locked = true;
+  const cfg = MODES[state.mode];
+  const q = state.current;
+  const isRight = !timedOut && choice === q.answerIndex;
+  const elapsed = performance.now() - state.questionStartAt;
+
+  let gained = 0;
+  if (isRight) {
+    state.correct++;
+    state.combo++;
+    state.maxCombo = Math.max(state.maxCombo, state.combo);
+    const speed = cfg.perQuestion
+      ? clamp(1 - elapsed / (cfg.perQuestion * 1000), 0, 1)
+      : 0.5;
+    const comboMul = 1 + Math.min(state.combo - 1, 5) * 0.12;
+    gained = Math.round(cfg.points * comboMul * (1 + speed * 0.5));
+    state.score += gained;
+  } else {
+    state.combo = 0;
+    if (cfg.timed) state.globalLeft = Math.max(0, state.globalLeft - 2000);
+    if (cfg.lives) state.lives = Math.max(0, state.lives - 1);
+  }
+  state.answered++;
+  state.log.push({
+    word: q.word, sentence: q.sentence, source: q.source,
+    chosen: timedOut ? '（超时未答）' : q.options[choice],
+    correct: q.options[q.answerIndex],
+    ok: isRight,
+  });
+
+  // paint the options
+  const btns = $$('#opts .opt');
+  btns.forEach((b, i) => {
+    b.classList.add('locked');
+    if (i === q.answerIndex) b.classList.add('right');
+    else if (i === choice) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  const examples = (q.allSenses || []).length > 1
+    ? '<div class="allEx">本词其它义项：' +
+      q.allSenses.filter(m => m !== q.meaning).map(m => '<em>' + esc(m) + '</em>').join(' · ') +
+      '</div>'
+    : '';
+  $('#fb').innerHTML =
+    '<div class="fb ' + (isRight ? 'ok' : 'no') + '">' +
+    (isRight
+      ? '✅ 答对了 <b>+' + gained + '</b> 分' + (state.combo >= 2 ? '　🔥 ' + state.combo + ' 连击' : '')
+      : '❌ ' + (timedOut ? '超时了' : '答错了') + '　正确答案：<b>' + esc(q.options[q.answerIndex]) + '</b>') +
+    examples +
+    '<div class="allEx" style="margin-top:8px">按 <span class="kbd">Enter</span> 进入下一题</div>' +
+    '</div>';
+
+  $('#qScore').textContent = '得分 ' + state.score;
+  $('#combo').textContent = state.combo >= 2 ? `🔥 ${state.combo} 连击` : (cfg.lives ? `❤️ ${state.lives}` : '');
+  state.idx++;
+
+  const auto = isRight ? 1100 : 2200;
+  setTimeout(() => { if (state.screen === 'quiz') advanceAfterAnswer(); }, auto);
+  state.pendingAuto = true;
+}
+
+function advanceAfterAnswer() {
+  state.pendingAuto = false;
+  if (state.screen !== 'quiz') return;
+  const cfg = MODES[state.mode];
+  if (cfg.lives && state.lives <= 0) { finish('命用完了'); return; }
+  if (cfg.timed && state.globalLeft <= 0) { finish('时间到'); return; }
+  nextQuestion();
+}
+
+function finish(reason) {
+  stopTicker();
+  const used = performance.now() - state.startAt;
+  const acc = state.answered ? state.correct / state.answered : 0;
+  const result = {
+    name: state.name,
+    mode: state.mode,
+    score: state.score,
+    correct: state.correct,
+    answered: state.answered,
+    acc: Math.round(acc * 100),
+    maxCombo: state.maxCombo,
+    ms: Math.round(used),
+    at: Date.now(),
+    reason,
+  };
+  state.lastResult = result;
+
+  if (state.score > 0) {
+    const board = loadJSON(LS.board, []);
+    board.push(result);
+    // keep a generous but bounded history
+    board.sort((a, b) => b.score - a.score || a.ms - b.ms);
+    saveJSON(LS.board, board.slice(0, 500));
+    const best = loadJSON(LS.best, {});
+    if (!best[state.name] || state.score > best[state.name]) {
+      best[state.name] = state.score;
+      saveJSON(LS.best, best);
+    }
+  }
+  renderResult(result);
+  show('result');
+  updateChips();
+}
+
+function renderResult(r) {
+  $('#rsTitle').textContent = r.reason + '　·　' + r.name + '　·　' + MODES[r.mode].name;
+  $('#rsScore').textContent = r.score;
+  const rank = rankOf(r);
+  $('#rsRank').innerHTML = rank ? '本轮排名 <b>#' + rank + '</b>' : '尚未上榜';
+  $('#rsStats').innerHTML = [
+    ['正确率', r.acc + '%'],
+    ['答对 / 作答', r.correct + ' / ' + r.answered],
+    ['最高连击', r.maxCombo],
+    ['用时', fmtTime(r.ms)],
+  ].map(([l, v]) => '<div class="stat"><div class="v">' + v + '</div><div class="l">' + l + '</div></div>').join('');
+
+  const wrong = state.log.filter(x => !x.ok);
+  const right = state.log.filter(x => x.ok);
+  const list = wrong.concat(right);
+  $('#rsReview').innerHTML = list.length ? list.map(x => {
+    const m = x.sentence.match(new RegExp('^(.*?)(' + x.word + ')(.*)$'));
+    const s = m
+      ? esc(m[1]) + '<mark>' + esc(m[2]) + '</mark>' + esc(m[3])
+      : esc(x.sentence);
+    return '<div class="rv"><div class="m ' + (x.ok ? 'y' : 'n') + '">' + (x.ok ? '✓' : '✗') + '</div>' +
+      '<div class="body"><div class="s">' + s + '</div>' +
+      '<div class="a">你答：<u>' + esc(x.chosen) + '</u>　正确：<i>' + esc(x.correct) + '</i>' +
+      (x.source ? '　' + esc(x.source) : '') + '</div></div></div>';
+  }).join('') : '<div class="empty">本轮没有作答记录</div>';
+}
+
+function rankOf(r) {
+  const board = loadJSON(LS.board, []).filter(x => x.mode === r.mode);
+  const better = board.filter(x => x.score > r.score || (x.score === r.score && x.ms < r.ms));
+  return board.length ? better.length + 1 : 0;
+}
+
+/* ------------------------------------------------------------ leaderboard */
+function renderBoard() {
+  const scope = state.boardScope;
+  let rows = loadJSON(LS.board, []);
+  if (scope !== 'all') rows = rows.filter(r => r.mode === scope);
+  rows.sort((a, b) => b.score - a.score || a.ms - b.ms || a.at - b.at);
+  rows = rows.slice(0, 50);
+
+  const tb = $('#boardTable tbody');
+  if (!rows.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">还没有成绩，先去答一轮吧 🎯</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = rows.map((r, i) => {
+    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    const d = new Date(r.at);
+    const stamp = (d.getMonth() + 1) + '/' + d.getDate() + ' ' +
+      String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    return '<tr class="' + cls + '"><td class="rk">' + (i + 1) + '</td>' +
+      '<td class="nm">' + esc(r.name) + '</td>' +
+      '<td class="sc">' + r.score + '</td>' +
+      '<td>' + r.acc + '%</td>' +
+      '<td class="tm">' + fmtTime(r.ms) + '</td>' +
+      '<td>' + MODES[r.mode].name + '</td>' +
+      '<td class="tm">' + stamp + '</td></tr>';
+  }).join('');
+}
+
+/* ------------------------------------------------------------------ events */
+function bind() {
+  $('#btnStart').addEventListener('click', startQuiz);
+  $('#btnGoBoard').addEventListener('click', () => { renderBoard(); show('board'); });
+  $('#btnBoard2').addEventListener('click', () => { renderBoard(); show('board'); });
+  $('#btnHome').addEventListener('click', () => { updateChips(); show('home'); });
+  $('#btnHome2').addEventListener('click', () => { updateChips(); show('home'); });
+  $('#btnAgain').addEventListener('click', startQuiz);
+  $('#btnQuit').addEventListener('click', () => finish('主动结束'));
+
+  $('#nameInput').addEventListener('input', e => {
+    state.name = e.target.value.trim();
+    renderRoster();
+    updateChips();
+  });
+
+  $$('#modes .mode').forEach(el => el.addEventListener('click', () => {
+    state.mode = el.dataset.mode;
+    renderModes();
+  }));
+
+  // roster editor
+  $('#btnRoster').addEventListener('click', () => {
+    const box = $('#rosterBox');
+    box.classList.toggle('hidden');
+    if (!box.classList.contains('hidden')) {
+      $('#rosterText').value = loadJSON(LS.roster, DEFAULT_ROSTER).join('\n');
+    }
+  });
+  $('#btnRosterSave').addEventListener('click', () => {
+    const list = $('#rosterText').value.split(/\r?\n|[,，、;；]/)
+      .map(s => s.trim()).filter(Boolean);
+    saveJSON(LS.roster, Array.from(new Set(list)));
+    renderRoster();
+  });
+  $('#btnRosterReset').addEventListener('click', () => {
+    saveJSON(LS.roster, DEFAULT_ROSTER);
+    $('#rosterText').value = DEFAULT_ROSTER.join('\n');
+    renderRoster();
+  });
+
+  // leaderboard tabs
+  $$('#boardTabs .tab').forEach(t => t.addEventListener('click', () => {
+    state.boardScope = t.dataset.scope;
+    $$('#boardTabs .tab').forEach(x => x.classList.toggle('on', x === t));
+    renderBoard();
+  }));
+  $('#btnClearAll').addEventListener('click', () => {
+    if (confirm('确定清空排行榜上的全部成绩吗？此操作不可撤销。')) {
+      saveJSON(LS.board, []);
+      saveJSON(LS.best, {});
+      renderBoard(); updateChips();
+    }
+  });
+  $('#btnClearOne').addEventListener('click', () => {
+    if (!state.name) { alert('请先在首页选择或输入姓名。'); return; }
+    if (!confirm('确定清除「' + state.name + '」的成绩吗？')) return;
+    const board = loadJSON(LS.board, []).filter(r => r.name !== state.name);
+    saveJSON(LS.board, board);
+    const best = loadJSON(LS.best, {}); delete best[state.name]; saveJSON(LS.best, best);
+    renderBoard(); updateChips();
+  });
+
+  // keyboard
+  document.addEventListener('keydown', e => {
+    if (state.screen !== 'quiz') return;
+    if (e.key === 'Escape') { finish('主动结束'); return; }
+    if (e.key === 'Enter') {
+      if (state.locked) { e.preventDefault(); advanceAfterAnswer(); }
+      return;
+    }
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !state.locked) {
+      const btns = $$('#opts .opt');
+      if (btns[n - 1]) answer(n - 1, false);
+    }
+  });
+}
+
+/* ------------------------------------------------------------- study cards */
+const cardState = { list: [], idx: 0, revealed: true };
+
+function renderCard() {
+  const c = cardState.list[cardState.idx];
+  if (!c) { $('#cardWord').textContent = '—'; $('#cardSenses').innerHTML = ''; return; }
+  $('#cardWord').textContent = c.word;
+  $('#cardPos').textContent = (cardState.idx + 1) + ' / ' + cardState.list.length;
+  $('#cardCount').textContent = '共 ' + c.senses.length + ' 个义项';
+  $('#cardSenses').innerHTML = c.senses.map((s, i) => {
+    const m = s.sentence.match(new RegExp('^(.*?)(' + c.word + ')(.*)$'));
+    const sent = m ? esc(m[1]) + '<span class="hl">' + esc(m[2]) + '</span>' + esc(m[3]) : esc(s.sentence);
+    const mean = cardState.revealed
+      ? '<b style="color:var(--gold)">' + esc(s.meaning) + '</b>'
+      : '<span style="color:var(--dim)">［空格显示释义］</span>';
+    return '<div style="padding:9px 0;border-bottom:1px solid var(--line)">' +
+      '<div style="font-family:\'Songti SC\',serif;font-size:19px;line-height:1.9">' + sent + '</div>' +
+      '<div style="font-size:13.5px;margin-top:5px">' + (i + 1) + '. ' + mean +
+      '<span style="color:var(--muted)">　' + esc(s.source) + '</span></div></div>';
+  }).join('');
+}
+
+function openCards(filter) {
+  const bank = Array.isArray(window.QUESTION_BANK) ? window.QUESTION_BANK : [];
+  const bankWords = new Set(state.pool.map(p => p.word));
+  let list = bank.filter(e => bankWords.has(e.word));
+  const q = (filter || '').trim();
+  if (q) {
+    list = list.filter(e => e.word.includes(q) ||
+      e.senses.some(s => s.sentence.includes(q) || s.meaning.includes(q)));
+  }
+  cardState.list = list.length ? list : bank;
+  cardState.idx = 0;
+  cardState.revealed = true;
+  renderCard();
+  show('cards');
+}
+
+function bindCards() {
+  $('#btnCards').addEventListener('click', () => openCards(''));
+  $('#cardHome').addEventListener('click', () => show('home'));
+  $('#cardQuiz').addEventListener('click', () => { show('home'); startQuiz(); });
+  $('#cardPrev').addEventListener('click', () => {
+    cardState.idx = (cardState.idx - 1 + cardState.list.length) % cardState.list.length;
+    cardState.revealed = true; renderCard();
+  });
+  $('#cardNext').addEventListener('click', () => {
+    cardState.idx = (cardState.idx + 1) % cardState.list.length;
+    cardState.revealed = true; renderCard();
+  });
+  $('#cardSearch').addEventListener('input', e => {
+    openCards(e.target.value);
+  });
+  document.addEventListener('keydown', e => {
+    if (state.screen !== 'cards') return;
+    if (e.key === 'ArrowLeft') { $('#cardPrev').click(); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { $('#cardNext').click(); e.preventDefault(); }
+    else if (e.key === ' ') { cardState.revealed = !cardState.revealed; renderCard(); e.preventDefault(); }
+    else if (e.key === 'Escape') { show('home'); }
+  });
+}
+
+/* -------------------------------------------------------------------- init */
+function init() {
+  state.pool = buildPool();
+  state.mode = 'quick';
+  state.name = loadJSON(LS.who, '') || '';
+  $('#nameInput').value = state.name;
+  renderRoster();
+  renderModes();
+  updateChips();
+  bind();
+  bindCards();
+  if (!state.pool.length) {
+    $('#chipBank').innerHTML = '<b style="color:var(--bad)">题库未加载</b>';
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+
+/* Expose a small surface for debugging and for the offline screenshot probes. */
+window.__ycdy = {
+  get state() { return state; },
+  startQuiz, finish, answer, advanceAfterAnswer, renderBoard, show, buildPool,
+  openCards, renderCard, cardState,
+};
+</script>
+</body>
+</html>
